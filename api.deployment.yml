@@ -1,12 +1,32 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  annotations:
+    branch: refs/heads/main
+    commit: 962de6b8b9f775d4e6b714d823179e0501a152a6
+    createdBy: mikeblakeuk
+    deployTimestamp: "1647369312416"
+    deployment.kubernetes.io/revision: "1"
+    jobName: build-and-publish-docker-image
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"apps/v1","kind":"Deployment","metadata":{"annotations":{},"labels":{"app":"api"},"name":"api","namespace":"ingress-demo"},"spec":{"replicas":1,"selector":{"matchLabels":{"app":"api"}},"strategy":{"rollingUpdate":{"maxSurge":1,"maxUnavailable":1},"type":"RollingUpdate"},"template":{"metadata":{"labels":{"app":"api"},"name":"api"},"spec":{"containers":[{"env":[{"name":"MONGODB_CONNECTION","valueFrom":{"secretKeyRef":{"key":"db","name":"cosmosdb"}}}],"image":"fabmedical562487.azurecr.io/content-api","imagePullPolicy":"Always","livenessProbe":{"failureThreshold":3,"httpGet":{"path":"/","port":3001},"initialDelaySeconds":30,"periodSeconds":20,"timeoutSeconds":10},"name":"api","ports":[{"containerPort":3001,"hostPort":3001,"protocol":"TCP"}],"resources":{"requests":{"cpu":"1000m","memory":"128Mi"}},"securityContext":{"privileged":false},"terminationMessagePath":"/dev/termination-log","terminationMessagePolicy":"File"}],"dnsPolicy":"ClusterFirst","imagePullSecrets":[{"name":"ingress-demo-secret"}],"restartPolicy":"Always","schedulerName":"default-scheduler","securityContext":{},"terminationGracePeriodSeconds":30}}}}
+    provider: GitHub
+    repository: mikeblakeuk/Fabmedical
+    run: "1988585148"
+    runUri: https://github.com/mikeblakeuk/Fabmedical/actions/runs/1988585148
+    workflow: content-api
+  creationTimestamp: "2022-03-15T18:35:13Z"
+  generation: 2
   labels:
-      app: api
+    app: api
   name: api
   namespace: ingress-demo
+  resourceVersion: "65527"
+  uid: d853f2d6-1761-477d-88c0-1dc5550cd856
 spec:
+  progressDeadlineSeconds: 600
   replicas: 1
+  revisionHistoryLimit: 10
   selector:
     matchLabels:
       app: api
@@ -17,42 +37,66 @@ spec:
     type: RollingUpdate
   template:
     metadata:
+      creationTimestamp: null
       labels:
-          app: api
+        app: api
       name: api
     spec:
       containers:
-      - image: fabmedical562487.azurecr.io/content-api
-        env:
-          - name: MONGODB_CONNECTION
-            valueFrom:
-              secretKeyRef:
-                name: cosmosdb
-                key: db
-        name: api
+      - env:
+        - name: MONGODB_CONNECTION
+          valueFrom:
+            secretKeyRef:
+              key: db
+              name: cosmosdb
+        image: fabmedical562487.azurecr.io/content-api
         imagePullPolicy: Always
         livenessProbe:
+          failureThreshold: 3
           httpGet:
-              path: /
-              port: 3001
+            path: /
+            port: 3001
+            scheme: HTTP
           initialDelaySeconds: 30
           periodSeconds: 20
+          successThreshold: 1
           timeoutSeconds: 10
-          failureThreshold: 3
+        name: api
         ports:
-          - containerPort: 3001
-            hostPort: 3001
-            protocol: TCP
+        - containerPort: 3001
+          hostPort: 3001
+          protocol: TCP
         resources:
           requests:
-              cpu: 1000m
-              memory: 128Mi
+            cpu: "1"
+            memory: 128Mi
         securityContext:
           privileged: false
         terminationMessagePath: /dev/termination-log
         terminationMessagePolicy: File
       dnsPolicy: ClusterFirst
+      imagePullSecrets:
+      - name: ingress-demo-secret
       restartPolicy: Always
       schedulerName: default-scheduler
       securityContext: {}
       terminationGracePeriodSeconds: 30
+status:
+  availableReplicas: 1
+  conditions:
+  - lastTransitionTime: "2022-03-15T18:35:13Z"
+    lastUpdateTime: "2022-03-15T18:35:13Z"
+    message: Deployment has minimum availability.
+    reason: MinimumReplicasAvailable
+    status: "True"
+    type: Available
+  - lastTransitionTime: "2022-03-15T18:35:13Z"
+    lastUpdateTime: "2022-03-15T18:35:19Z"
+    message: ReplicaSet "api-5c7b675c5d" has successfully progressed.
+    reason: NewReplicaSetAvailable
+    status: "True"
+    type: Progressing
+  observedGeneration: 2
+  readyReplicas: 1
+  replicas: 1
+  updatedReplicas: 1
